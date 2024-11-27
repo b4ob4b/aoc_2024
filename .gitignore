@@ -1,0 +1,7 @@
+.gradle/
+.idea/
+build/
+gradle/
+lib/
+out/
+/src/main/resources/**/input.txt
