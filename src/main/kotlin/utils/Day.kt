@@ -7,7 +7,7 @@ abstract class Day(
     inputType: IO.TYPE = IO.TYPE.INPUT
 ) {
 
-    private val year = 2023
+    private val year = 2024
     private val day = this.javaClass.simpleName.replace(Regex("Day|Test"), "").toInt()
 
     private val displayName = "Year $year - Day ${day.format(2, '0')}: $name"
