@@ -18,6 +18,10 @@ data class Field<T>(val field: List<List<T>>) {
 
     operator fun get(position: Position) = field[position.y][position.x]
 
+    operator fun contains(position: Position): Boolean {
+        return position.x in xIndices && position.y in yIndices
+    }
+
     fun search(element: T) = sequence {
         (0 until numberOfY).flatMap { y ->
             (0 until numberOfX).map { x ->
