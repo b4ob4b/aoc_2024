@@ -6,3 +6,4 @@ Here you find my solutions written in Kotlin:
 * [Day 2: Red-Nosed Reports](src/main/kotlin/Day02.kt)
 * [Day 3: Mull It Over](src/main/kotlin/Day03.kt)
 * [Day 4: Ceres Search](src/main/kotlin/Day04.kt)
+* [Day 5: Print Queue](src/main/kotlin/Day05.kt)
