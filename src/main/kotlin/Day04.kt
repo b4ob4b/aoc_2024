@@ -7,7 +7,7 @@ fun main() {
 
 class Day04(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Ceres Search", inputType = inputType) {
 
-    private val wordPuzzle = input.splitLines().map { it.split("") }.toField()
+    private val wordPuzzle = input.toGrid().toField()
 
     override fun part1(): Int {
         val directions = Position.origin.get8Neighbours()
