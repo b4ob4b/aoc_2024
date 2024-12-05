@@ -19,25 +19,23 @@ class Day05(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Print Queue", inputType =
 
     override fun part2() = updates.filter { !it.isValid() }.sumOf { it.reorderUpdate().getMiddlePage() }
 
-    private fun List<Int>.isValid() = withIndex().all { (index, r) ->
-        rules.filter { it.first == r }
-            .map { it.second }
-            .none { it in take(index + 1) }
+    private fun List<Int>.isValid() = withIndex().all { (index, page) ->
+        page.getInvalidPageBefore().none { it in take(index + 1) }
     }
 
     private fun List<Int>.reorderUpdate(): List<Int> {
-        val orderedUpdate = this.toMutableList()
-        while (!orderedUpdate.isValid()) {
-            orderedUpdate.indices.forEach { i ->
-                val currentNumber = orderedUpdate[i]
-                val forbiddenNumbersBefore = rules.filter { it.first == currentNumber }.map { it.second }
-                val numberToSwap = orderedUpdate.take(i).firstOrNull { it in forbiddenNumbersBefore }
-                if (numberToSwap != null) {
-                    orderedUpdate.swap(i, orderedUpdate.indexOf(numberToSwap))
-                }
+        val pages = this.toMutableList()
+        while (!pages.isValid()) {
+            pages.indices.forEach { pageIndex ->
+                pages
+                    .take(pageIndex)
+                    .firstOrNull { it in pages[pageIndex].getInvalidPageBefore() }
+                    ?.also {
+                        pages.swap(pageIndex, pages.indexOf(it))
+                    }
             }
         }
-        return orderedUpdate
+        return pages
     }
 
     private fun List<Int>.getMiddlePage() = this[this.size / 2]
@@ -45,4 +43,6 @@ class Day05(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Print Queue", inputType =
     private fun MutableList<Int>.swap(index1: Int, index2: Int) {
         this[index1] = this[index2].also { this[index2] = this[index1] }
     }
+
+    private fun Int.getInvalidPageBefore() = rules.filter { it.first == this }.map { it.second }
 }
