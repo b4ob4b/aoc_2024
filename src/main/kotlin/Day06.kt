@@ -7,67 +7,61 @@ fun main() {
     Day06().solve()
 }
 
-class Day06(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("", inputType = inputType) {
+class Day06(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Guard Gallivant", inputType = inputType) {
 
-    private val field = input.toGrid().toField()
-    private val path = mutableSetOf<Position>()
+    private val labPlan = input.toGrid().toField()
+    private val guard = Guard(labPlan.search("^").single(), Direction4.North)
+    private val lab = Lab(labPlan, guard)
+
+    override fun part1(): Int {
+        lab.simulateGuardsPath()
+        return lab.pathSize
+    }
+
+    override fun part2() = lab.countGuardLoops()
+
+    private class Lab(val labPlan: Field<String>, val guard: Guard) {
+        private val path = mutableSetOf<Path>()
+        private val obstacles = labPlan.search("#").toSet()
+        val isPart2 = false
+
+        val pathSize: Int
+            get() = path.distinctBy { it.position }.size
+
+        fun simulateGuardsPath(additionalObstacle: Position? = null): Boolean {
+            if (!isPart2) {
+                path.clear()
+            }
+            path.add(Path(guard.position, guard.faceDirection))
+            var guard = this.guard
+            while (true) {
+                val lookAhead = guard.look()
+                if (lookAhead !in labPlan) break
+                if (lookAhead in obstacles || lookAhead == additionalObstacle) {
+                    guard = guard.turnRight()
+                } else {
+                    guard = guard.move()
+                    val newPath = Path(guard.position, guard.faceDirection)
+                    if (newPath in path) return true
+                    path.add(newPath)
+                }
+            }
+            return false
+        }
+
+        fun countGuardLoops(): Int {
+            val possiblePositions = path.map { it.position }.toSet()
+            return possiblePositions.count { possiblePosition ->
+                simulateGuardsPath(possiblePosition)
+            }
+        }
+    }
+
+    data class Path(val position: Position, val direction: Direction4)
 
     data class Guard(val position: Position, val faceDirection: Direction4) {
         fun move() = copy(position = position.doMovement(faceDirection))
         fun turnRight() = copy(faceDirection = faceDirection.rotateBy(Rotation.Right))
         fun look() = position.doMovement(faceDirection)
-    }
-
-    override fun part1(): Int {
-        val startPosition = field.search("^").single()
-        val guard = Guard(startPosition, Direction4.North)
-        var newGuard = guard
-        path.add(guard.position)
-        while (true) {
-            val newPosition = newGuard.look()
-            if (newPosition in field) {
-                if (field[newPosition] == "#") {
-                    newGuard = newGuard.turnRight()
-                } else {
-                    newGuard = newGuard.move()
-                    path.add(newGuard.position)
-                }
-            } else {
-                break
-            }
-        }
-
-        return path.size
-    }
-
-    override fun part2(): Any? {
-        val maxSizeOfPath = path.size
-
-        return path.count { additionalObjectPosition ->
-            val startPosition = field.search("^").single()
-            val guard = Guard(startPosition, Direction4.North)
-            var newGuard = guard
-            val newPath = mutableSetOf(guard.position)
-            var steps = 0
-            var isInLoop = false
-            while (steps < maxSizeOfPath * 2) {
-                val newPosition = newGuard.look()
-                if (steps == (maxSizeOfPath * 2 - 1)) {
-                    isInLoop = true
-                }
-                if (newPosition in field) {
-                    if (field[newPosition] == "#" || newPosition == additionalObjectPosition) {
-                        newGuard = newGuard.turnRight()
-                    } else {
-                        newGuard = newGuard.move()
-                        steps += 1
-                        newPath.add(newGuard.position)
-                    }
-                } else {
-                    break
-                }
-            }
-            isInLoop
-        }
     }
 }           
