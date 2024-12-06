@@ -48,7 +48,9 @@ data class Field<T>(val field: List<List<T>>) {
                     val position = Position(x, y)
                     it(position, cell)
                 }
-            }.toField()
+            }
+            .reversed()
+            .toField()
     }
 
     fun highlight(highlight: (position: Position, cell: T) -> Boolean) {
@@ -67,6 +69,7 @@ data class Field<T>(val field: List<List<T>>) {
 
 
     override fun toString() = field
+        .reversed()
         .joinToString("\n") { row ->
             row.joinToString(" ")
         }

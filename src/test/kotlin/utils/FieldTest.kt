@@ -40,8 +40,8 @@ internal class FieldTest {
     fun insertAtPosition() {
         field.insertAt(Position.origin, 10) shouldBe Field(
             listOf(
-                listOf(4, 5, 6),
                 listOf(10, 2, 3),
+                listOf(4, 5, 6),
             )
         )
     }
@@ -56,8 +56,8 @@ internal class FieldTest {
         val positionMap = listOf(Position.origin, Position(2, 1)).associateWith { 5 }
         field.insertAt(positionMap) shouldBe Field(
             listOf(
-                listOf(4, 5, 5),
                 listOf(5, 2, 3),
+                listOf(4, 5, 5),
             )
         )
     }
@@ -68,8 +68,8 @@ internal class FieldTest {
             cell * 2
         } shouldBe Field(
             listOf(
-                listOf(8, 10, 12),
                 listOf(2, 4, 6),
+                listOf(8, 10, 12),
             )
         )
     }
