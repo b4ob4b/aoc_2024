@@ -23,15 +23,11 @@ class Day06(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Guard Gallivant", inputTy
     private class Lab(val labPlan: Field<String>, val guard: Guard) {
         private val path = mutableSetOf<Path>()
         private val obstacles = labPlan.search("#").toSet()
-        val isPart2 = false
 
         val pathSize: Int
             get() = path.distinctBy { it.position }.size
 
         fun simulateGuardsPath(additionalObstacle: Position? = null): Boolean {
-            if (!isPart2) {
-                path.clear()
-            }
             path.add(Path(guard.position, guard.faceDirection))
             var guard = this.guard
             while (true) {
@@ -52,6 +48,7 @@ class Day06(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Guard Gallivant", inputTy
         fun countGuardLoops(): Int {
             val possiblePositions = path.map { it.position }.toSet()
             return possiblePositions.count { possiblePosition ->
+                path.clear()
                 simulateGuardsPath(possiblePosition)
             }
         }
@@ -60,7 +57,7 @@ class Day06(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Guard Gallivant", inputTy
     data class Path(val position: Position, val direction: Direction4)
 
     data class Guard(val position: Position, val faceDirection: Direction4) {
-        fun move() = copy(position = position.doMovement(faceDirection))
+        fun move() = copy(position = look())
         fun turnRight() = copy(faceDirection = faceDirection.rotateBy(Rotation.Right))
         fun look() = position.doMovement(faceDirection)
     }
