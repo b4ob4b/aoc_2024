@@ -8,3 +8,4 @@ Here you find my solutions written in Kotlin:
 * [Day 4: Ceres Search](src/main/kotlin/Day04.kt)
 * [Day 5: Print Queue](src/main/kotlin/Day05.kt)
 * [Day 6: Guard Gallivant](src/main/kotlin/Day06.kt)
+* [Day 7: Guard Gallivant](src/main/kotlin/Day07.kt)

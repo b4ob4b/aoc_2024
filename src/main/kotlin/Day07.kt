@@ -5,47 +5,43 @@ fun main() {
     Day07().solve()
 }
 
-class Day07(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("", inputType = inputType) {
+class Day07(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Bridge Repair", inputType = inputType) {
 
     private val equations = input.splitLines().map { line ->
         val (left, right) = line.split(": ")
         Equation(left.toLong(), right.extractInts().map { it.toLong() })
     }
 
+
+    override fun part1() = equations solveWith listOf(Operation.Add, Operation.Multiply)
+
+    override fun part2() = equations solveWith listOf(Operation.Add, Operation.Multiply, Operation.Concatenate)
+
+    private infix fun List<Equation>.solveWith(operations: List<Operation>) = filter { equation ->
+        val isValid = equation
+            .solve(operations)
+            .any { it.left == it.right.single() }
+        isValid
+    }.sumOf { it.left }
+
     private data class Equation(val left: Long, val right: List<Long>) {
-        fun solve(p2: Boolean = false): List<Equation> {
+        fun solve(operations: List<Operation>): List<Equation> {
+            if (right.sum() > left) return emptyList()
             if (right.size == 1) return listOf(this)
             val (r0, r1) = right.take(2)
             val rest = right.drop(2)
 
-            return listOf(
-                Equation(left, listOf(r0 + r1) + rest).solve(p2),
-                Equation(left, listOf(r0 * r1) + rest).solve(p2),
-                if (p2) Equation(left, concatenate(r0, r1) + rest).solve(p2) else emptyList()
-            ).flatten()
-        }
-
-        private fun concatenate(r0: Long, r1: Long): List<Long> {
-            return listOf("$r0$r1".toLong())
+            return operations.map { Equation(left, listOf(it.apply(r0, r1)) + rest).solve(operations) }.flatten()
         }
     }
 
-    override fun part1(): Long {
-        return equations.sumOf { equation ->
-            val isValid = equation
-                .solve()
-                .any { it.left == it.right.single() }
-            if (isValid) equation.left else 0
+    private enum class Operation {
+        Add, Multiply, Concatenate;
+
+        fun apply(left: Long, right: Long) = when (this) {
+            Add -> left + right
+            Multiply -> left * right
+            Concatenate -> "$left$right".toLong()
         }
     }
-
-
-    override fun part2(): Long {
-        return equations.filter { equation ->
-            val isValid = equation
-                .solve(p2 = true)
-                .any { it.left == it.right.single() }
-            isValid
-        }.sumOf { it.left }
-    }
-}           
+}
