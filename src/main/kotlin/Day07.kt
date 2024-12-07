@@ -17,21 +17,24 @@ class Day07(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Bridge Repair", inputType
 
     override fun part2() = equations solveWith listOf(Operation.Add, Operation.Multiply, Operation.Concatenate)
 
-    private infix fun List<Equation>.solveWith(operations: List<Operation>) = filter { equation ->
-        val isValid = equation
-            .solve(operations)
-            .any { it.left == it.right.single() }
-        isValid
-    }.sumOf { it.left }
+    private infix fun List<Equation>.solveWith(operations: List<Operation>) =
+        filter { equation ->
+            equation.solve(operations).any { it.left == it.right.single() }
+        }
+            .sumOf { it.left }
 
     private data class Equation(val left: Long, val right: List<Long>) {
-        fun solve(operations: List<Operation>): List<Equation> {
-            if (right.sum() > left) return emptyList()
-            if (right.size == 1) return listOf(this)
-            val (r0, r1) = right.take(2)
-            val rest = right.drop(2)
-
-            return operations.map { Equation(left, listOf(it.apply(r0, r1)) + rest).solve(operations) }.flatten()
+        fun solve(operations: List<Operation>): Sequence<Equation> = sequence {
+            if (right.size == 1) yield(this@Equation) else {
+                val (operand1, operand2) = right.take(2)
+                val rest = right.drop(2)
+                operations.forEach { operation ->
+                    yieldAll(
+                        Equation(left, listOf(operation.apply(operand1, operand2)) + rest)
+                            .solve(operations)
+                    )
+                }
+            }
         }
     }
 
