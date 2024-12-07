@@ -1,13 +1,13 @@
 package utils
 
-import utils.IO.createNewDay
+import utils.IO.createNextDay
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 
 
 fun main() {
-    createNewDay(1, true)
+    createNextDay(true)
 }
 
 object IO {
@@ -27,7 +27,12 @@ object IO {
 
     fun createNewDay(day: Int, createInputFiles: Boolean = true) {
         if (createInputFiles) createInputFiles(day)
-        createKtFile(day, createInputFiles)
+        createKtFile(day)
+    }
+
+    fun createNextDay(createInputFiles: Boolean = true) {
+        val lastDay = File(resourcesPath).listFiles()?.maxOfOrNull { it.name.toInt() } ?: 0
+        createNewDay(lastDay + 1, createInputFiles)
     }
 
     private fun createInputFiles(day: Int) {
@@ -38,7 +43,7 @@ object IO {
         }
     }
 
-    private fun createKtFile(day: Int, createInputFiles: Boolean) {
+    private fun createKtFile(day: Int) {
         val formattedDay = day.toString().padStart(2, '0')
         val text = """
             import utils.*
@@ -64,7 +69,7 @@ object IO {
             }           
         """.trimIndent()
 
-        val dir = File("$sourceCodePath")
+        val dir = File(sourceCodePath)
         if (dir.isDirectory) {
             val file = File("$dir/Day$formattedDay.kt")
             if (!file.exists()) {
