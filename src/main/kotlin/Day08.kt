@@ -8,24 +8,23 @@ fun main() {
 class Day08(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Resonant Collinearity", inputType = inputType) {
 
     private val field = input.toGrid().toField()
-    private val senderTypes = field.search("[a-zA-Z0-9]".toRegex())
-    private val senderPositions = senderTypes.map { field[it] }.toSet()
+    private val antennas = field
+        .search("[a-zA-Z0-9]".toRegex())
+        .associateWith { field[it] }
+        .entries
+        .groupBy({ it.value }, { it.key })
 
-    override fun part1() = calculateNumberOfAntinodes(1..1)
+    override fun part1() = antennas.calculateNumberOfAntinodes(1..1)
 
-    override fun part2() = calculateNumberOfAntinodes(0..field.numberOfX)
+    override fun part2() = antennas.calculateNumberOfAntinodes(0..field.numberOfX)
 
-    private fun calculateNumberOfAntinodes(sendingRange: IntRange) =
-        senderPositions
-            .flatMap { sender ->
-                field.search(sender).findAntinodes(sendingRange)
-            }
+    private fun Map<String, List<Position>>.calculateNumberOfAntinodes(sendingRange: IntRange) =
+        flatMap { (_, positions) -> positions.findAntinodes(sendingRange) }
             .toSet()
             .count { it in field }
 
-    private fun Sequence<Position>.findAntinodes(sendingRange: IntRange) =
-        toSet()
-            .combinations(2)
+    private fun List<Position>.findAntinodes(sendingRange: IntRange) =
+        combinations(2)
             .flatMap { (a, b) ->
                 (sendingRange).flatMap { d ->
                     listOf(a + d * (a - b), b - d * (a - b))
