@@ -9,3 +9,4 @@ Here you find my solutions written in Kotlin:
 * [Day 5: Print Queue](src/main/kotlin/Day05.kt)
 * [Day 6: Guard Gallivant](src/main/kotlin/Day06.kt)
 * [Day 7: Bridge Repair](src/main/kotlin/Day07.kt)
+* [Day 8: Resonant Collinearity](src/main/kotlin/Day08.kt)
