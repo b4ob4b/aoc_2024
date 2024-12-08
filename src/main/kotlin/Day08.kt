@@ -15,19 +15,19 @@ class Day08(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Resonant Collinearity", i
 
     override fun part2() = calculateNumberOfAntinodes(0..field.numberOfX)
 
-    private fun calculateNumberOfAntinodes(antinodeRange: IntRange) =
+    private fun calculateNumberOfAntinodes(sendingRange: IntRange) =
         senderPositions
             .flatMap { sender ->
-                field.search(sender).findAntiNodes(antinodeRange)
+                field.search(sender).findAntinodes(sendingRange)
             }
             .toSet()
             .count { it in field }
 
-    private fun Sequence<Position>.findAntiNodes(antinodeRange: IntRange) =
+    private fun Sequence<Position>.findAntinodes(sendingRange: IntRange) =
         toSet()
             .combinations(2)
             .flatMap { (a, b) ->
-                (antinodeRange).flatMap { d ->
+                (sendingRange).flatMap { d ->
                     listOf(a + d * (a - b), b - d * (a - b))
                 }
             }
