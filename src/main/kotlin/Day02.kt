@@ -2,11 +2,11 @@ import utils.*
 import kotlin.math.abs
 
 fun main() {
-    Day02(IO.TYPE.SAMPLE).test(2, 4)
-    Day02().solve()
+    Day02 { WithSampleData }.test(2, 4)
+    Day02 { WithInputData }.solve()
 }
 
-class Day02(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Red-Nosed Reports", inputType = inputType) {
+class Day02(dataType: () -> DataType) : Day("Red-Nosed Reports", dataType) {
 
     private val reports = input
         .splitLines()

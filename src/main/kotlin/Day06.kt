@@ -3,11 +3,11 @@ import utils.navigation.Direction4
 import utils.navigation.Rotation
 
 fun main() {
-    Day06(IO.TYPE.SAMPLE).test(41, 6)
-    Day06().solve()
+    Day06 { WithSampleData }.test(41, 6)
+    Day06 { WithInputData }.solve()
 }
 
-class Day06(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Guard Gallivant", inputType = inputType) {
+class Day06(dataType: () -> DataType) : Day("Guard Gallivant", dataType) {
 
     private val labPlan = input.toGrid().toField()
     private val guard = Guard(labPlan.search("^").single(), Direction4.North)

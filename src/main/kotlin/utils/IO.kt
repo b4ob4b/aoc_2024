@@ -10,18 +10,30 @@ fun main() {
     createNextDay(true)
 }
 
+sealed class DataType {
+    abstract val path: String
+}
+
+data object WithSampleData : DataType() {
+    override val path = "sample"
+}
+
+data object WithSample2Data : DataType() {
+    override val path = "sample2"
+}
+
+data object WithInputData : DataType() {
+    override val path = "input"
+}
+
 object IO {
 
     private val basePath = Path("").absolute()
     private val resourcesPath = "$basePath/src/main/resources"
     private val sourceCodePath = "$basePath/src/main/kotlin"
 
-    enum class TYPE(val path: String) {
-        SAMPLE("sample"), INPUT("input"), SAMPLE2("sample2")
-    }
-
-    fun readFile(day: Int, type: TYPE = TYPE.INPUT): String {
-        val filePath = "$resourcesPath/$day/${type.path}.txt"
+    fun readFile(day: Int, dataType: DataType): String {
+        val filePath = "$resourcesPath/$day/${dataType.path}.txt"
         return File(filePath).readText()
     }
 
@@ -49,11 +61,11 @@ object IO {
             import utils.*
             
             fun main() {
-                Day$formattedDay(IO.TYPE.SAMPLE).test()
-                Day$formattedDay().solve()
+                Day$formattedDay { WithSampleData }.test()
+                Day$formattedDay { WithInputData }.solve()
             }
             
-            class Day$formattedDay(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("", inputType = inputType) {
+            class Day$formattedDay(dataType: () -> DataType) : Day("", dataType) {
             
                 private val data = input.splitLines()
                 

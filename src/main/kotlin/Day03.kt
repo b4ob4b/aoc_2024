@@ -1,12 +1,12 @@
 import utils.*
 
 fun main() {
-    Day03(IO.TYPE.SAMPLE).test(161)
-    Day03(IO.TYPE.SAMPLE2).test(part2 = 48)
-    Day03().solve()
+    Day03 { WithSampleData }.test(161)
+    Day03 { WithSample2Data }.test(part2 = 48)
+    Day03 { WithInputData }.solve()
 }
 
-class Day03(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Mull It Over", inputType = inputType) {
+class Day03(dataType: () -> DataType) : Day("Mull It Over", dataType) {
 
     private val memory = input.replace("\n", "")
 

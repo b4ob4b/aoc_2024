@@ -1,11 +1,11 @@
 import utils.*
 
 fun main() {
-    Day04(IO.TYPE.SAMPLE).test(18, 9)
-    Day04().solve()
+    Day04 { WithSampleData }.test(18, 9)
+    Day04 { WithInputData }.solve()
 }
 
-class Day04(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Ceres Search", inputType = inputType) {
+class Day04(dataType: () -> DataType) : Day("Ceres Search", dataType) {
 
     private val wordPuzzle = input.toGrid().toField()
 

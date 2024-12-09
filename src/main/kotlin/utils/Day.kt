@@ -4,15 +4,15 @@ import kotlin.system.measureNanoTime
 
 abstract class Day(
     name: String = "",
-    inputType: IO.TYPE = IO.TYPE.INPUT
+    dataType: () -> DataType,
 ) {
 
     private val year = 2024
     private val day = this.javaClass.simpleName.replace(Regex("Day|Test"), "").toInt()
 
     private val displayName = "Year $year - Day ${day.format(2, '0')}: $name"
-    val input = IO.readFile(day, inputType)
-    val isTest = inputType != IO.TYPE.INPUT
+    val input = IO.readFile(day, dataType.invoke())
+    val isTest = dataType.invoke() != WithInputData
 
     fun solve() {
         solveWithPerformanceMeasurement()

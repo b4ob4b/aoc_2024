@@ -1,11 +1,11 @@
 import utils.*
 
 fun main() {
-    Day08(IO.TYPE.SAMPLE).test(14, 34)
-    Day08().solve()
+    Day08 { WithSampleData }.test(14, 34)
+    Day08 { WithInputData }.solve()
 }
 
-class Day08(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Resonant Collinearity", inputType = inputType) {
+class Day08(dataType: () -> DataType) : Day("Resonant Collinearity", dataType) {
 
     private val field = input.toGrid().toField()
     private val antennas = field

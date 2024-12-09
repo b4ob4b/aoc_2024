@@ -1,11 +1,11 @@
 import utils.*
 
 fun main() {
-    Day07(IO.TYPE.SAMPLE).test(3749L, 11387L)
-    Day07().solve()
+    Day07 { WithSampleData }.test(3749L, 11387L)
+    Day07 { WithInputData }.solve()
 }
 
-class Day07(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Bridge Repair", inputType = inputType) {
+class Day07(dataType: () -> DataType) : Day("Bridge Repair", dataType) {
 
     private val equations = input.splitLines().map { line ->
         val (left, right) = line.split(": ")

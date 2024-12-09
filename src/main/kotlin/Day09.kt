@@ -1,11 +1,11 @@
 import utils.*
 
 fun main() {
-    Day09(IO.TYPE.SAMPLE).test(1928L, 2858L)
-    Day09().solve()
+    Day09 { WithSampleData }.test(1928L, 2858L)
+    Day09 { WithInputData }.solve()
 }
 
-class Day09(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Disk Fragmenter", inputType = inputType) {
+class Day09(dataType: () -> DataType) : Day("Disk Fragmenter", dataType) {
 
     private val memory = input
         .extractToList("\\d".toRegex())

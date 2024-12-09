@@ -1,11 +1,11 @@
 import utils.*
 
 fun main() {
-    Day05(IO.TYPE.SAMPLE).test(143, 123)
-    Day05().solve()
+    Day05 { WithSampleData }.test(143, 123)
+    Day05 { WithInputData }.solve()
 }
 
-class Day05(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Print Queue", inputType = inputType) {
+class Day05(dataType: () -> DataType) : Day("Print Queue", dataType) {
 
     private val data = input.split("\\n\\n".toRegex())
     private val rules = data[0].splitLines()
