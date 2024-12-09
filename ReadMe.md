@@ -10,3 +10,4 @@ Here you find my solutions written in Kotlin:
 * [Day 6: Guard Gallivant](src/main/kotlin/Day06.kt)
 * [Day 7: Bridge Repair](src/main/kotlin/Day07.kt)
 * [Day 8: Resonant Collinearity](src/main/kotlin/Day08.kt)
+* [Day 9: Disk Fragmenter](src/main/kotlin/Day09.kt)
