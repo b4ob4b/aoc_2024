@@ -65,7 +65,7 @@ class Day09(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Disk Fragmenter", inputTy
 
         while (indexToCheck > 0) {
             val blockToMove = memory.withIndex()
-                .filter { (i, block) ->
+                .filter { (_, block) ->
                     block.type == Type.USED
                 }.withIndex()
                 .last { (filteredIndex, globalIndexedBlock) ->
@@ -79,7 +79,7 @@ class Day09(inputType: IO.TYPE = IO.TYPE.INPUT) : Day("Disk Fragmenter", inputTy
             }
 
             val emptyBlock = memory.withIndex()
-                .first { (i, block) ->
+                .first { (_, block) ->
                     block.type == Type.FREE && block.length >= blockToMove.value.length
                 }
 
