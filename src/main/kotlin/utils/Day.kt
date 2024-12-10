@@ -12,7 +12,7 @@ abstract class Day(
 
     private val displayName = "Year $year - Day ${day.format(2, '0')}: $name"
     val input = IO.readFile(day, dataType.invoke())
-    val isTest = dataType.invoke() != WithInputData
+    private val isTest = dataType.invoke() != WithInputData
 
     fun solve() {
         solveWithPerformanceMeasurement()
@@ -26,6 +26,8 @@ abstract class Day(
             throw Exception("part 2 creates wrong solution with sample data")
         }
     }
+
+    fun <T> T.print(printOnRealData: Boolean = false) = this.also { if (isTest || printOnRealData) println(it) }
 
     abstract fun part1(): Any?
 
