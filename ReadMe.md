@@ -11,3 +11,4 @@ Here you find my solutions written in Kotlin:
 * [Day 7: Bridge Repair](src/main/kotlin/Day07.kt)
 * [Day 8: Resonant Collinearity](src/main/kotlin/Day08.kt)
 * [Day 9: Disk Fragmenter](src/main/kotlin/Day09.kt)
+* [Day 10: Hoof It](src/main/kotlin/Day10.kt)
