@@ -16,41 +16,47 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
 
     private fun calculatePrice(): Pair<Int, Int> {
         val flowersToCheck = field.allPositions.toMutableSet()
-
-        var (price1, price2) = 0 to 0
+        var totalPrice = 0
+        var totalDiscountedPrice = 0
 
         while (flowersToCheck.isNotEmpty()) {
-            val p = flowersToCheck.first()
-            val flower = field[p]
+            val position = flowersToCheck.first()
+            val flower = field[position]
 
-            var fullPerimeter = 0
-            var area = 0
-
-            val flowersInGroup = mutableSetOf<Position>()
-            val seen = mutableSetOf<Position>()
-            flowersInGroup.add(p)
-
-            while (flowersInGroup.isNotEmpty()) {
-                val current = flowersInGroup.first()
-                flowersInGroup.remove(current)
-                area++
-                seen.add(current)
-                Direction4.entries.forEach { d ->
-                    val neighbour = current.doMovement(d)
-                    if (neighbour !in field || field[neighbour] != flower) {
-                        fullPerimeter++
-                    } else {
-                        if (neighbour !in seen) flowersInGroup.add(neighbour)
-                    }
-                }
-            }
+            val (area, fullPerimeter, seen) = calculateAreaAndPerimeter(position, flower)
             flowersToCheck.removeAll(seen)
-            price1 += area * fullPerimeter
-            price2 += area * findNumberOfSides(seen, flower)
+
+            totalPrice += area * fullPerimeter
+            totalDiscountedPrice += area * findNumberOfSides(seen, flower)
         }
 
-        return price1 to price2
+        return totalPrice to totalDiscountedPrice
     }
+
+    private fun calculateAreaAndPerimeter(start: Position, flower: String): Triple<Int, Int, Set<Position>> {
+        val flowersInGroup = mutableSetOf(start)
+        val seen = mutableSetOf<Position>()
+        var area = 0
+        var fullPerimeter = 0
+
+        while (flowersInGroup.isNotEmpty()) {
+            val current = flowersInGroup.first()
+            flowersInGroup.remove(current)
+            area++
+            seen.add(current)
+
+            Direction4.entries.forEach { direction ->
+                val neighbor = current.doMovement(direction)
+                if (neighbor !in field || field[neighbor] != flower) {
+                    fullPerimeter++
+                } else if (neighbor !in seen) {
+                    flowersInGroup.add(neighbor)
+                }
+            }
+        }
+        return Triple(area, fullPerimeter, seen)
+    }
+
 
     private fun findNumberOfSides(seen: Set<Position>, flower: String): Int {
         val bitMasks = setOf(
@@ -89,11 +95,9 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
                     Position(x + 1, y + 1),
                 )
                 mask.filter { transformedField[it] == flower }.map { it - Position(x, y) }.toSet().let {
-                    if (it in bitMasks) {
-                        smallPerimeter++
-                    }
-                    if (it in bitMasks2) {
-                        smallPerimeter += 2
+                    when (it) {
+                        in bitMasks -> smallPerimeter++
+                        in bitMasks2 -> smallPerimeter += 2
                     }
                 }
             }
