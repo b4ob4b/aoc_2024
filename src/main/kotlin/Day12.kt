@@ -84,7 +84,7 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
         val transformedField = Field(x1 - x0 + 3, y1 - y0 + 3) { "." }
             .insertAt(seen.map { it - offset }.associateWith { flower })
 
-        var smallPerimeter = 0
+        var sides = 0
 
         (0 until (transformedField.numberOfY - 1)).forEach { y ->
             (0 until (transformedField.numberOfX - 1)).forEach { x ->
@@ -96,13 +96,13 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
                 )
                 mask.filter { transformedField[it] == flower }.map { it - Position(x, y) }.toSet().let {
                     when (it) {
-                        in bitMasks -> smallPerimeter++
-                        in bitMasks2 -> smallPerimeter += 2
+                        in bitMasks -> sides++
+                        in bitMasks2 -> sides += 2
                     }
                 }
             }
         }
 
-        return smallPerimeter
+        return sides
     }
 }
