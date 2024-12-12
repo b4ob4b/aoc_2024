@@ -57,7 +57,13 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
 
 
     private fun findNumberOfSides(flowerGroup: Set<Position>, flower: String): Int {
-        val bitMasks = setOf(
+        val bitMask2x2 = setOf(
+            Position.origin,
+            Position(1, 0),
+            Position(0, 1),
+            Position(1, 1),
+        )
+        val oneEdgeBitMasks = setOf(
             setOf(Position(0, 0)),
             setOf(Position(1, 0)),
             setOf(Position(0, 1)),
@@ -67,7 +73,7 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
             setOf(Position(0, 1), Position(1, 1), Position(0, 0)),
             setOf(Position(1, 1), Position(0, 0), Position(1, 0)),
         )
-        val bitMasks2 = setOf(
+        val twoEdgeBitMasks = setOf(
             setOf(Position(0, 0), Position(1, 1)),
             setOf(Position(1, 0), Position(0, 1)),
         )
@@ -86,18 +92,17 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
 
         (0 until (transformedField.numberOfY - 1)).forEach { y ->
             (0 until (transformedField.numberOfX - 1)).forEach { x ->
-                val mask = setOf(
-                    Position(x, y),
-                    Position(x + 1, y),
-                    Position(x, y + 1),
-                    Position(x + 1, y + 1),
-                )
-                mask.filter { transformedField[it] == flower }.map { it - Position(x, y) }.toSet().let {
-                    when (it) {
-                        in bitMasks -> sides++
-                        in bitMasks2 -> sides += 2
+                bitMask2x2
+                    .map { it + Position(x, y) }
+                    .filter { transformedField[it] == flower }
+                    .map { it - Position(x, y) }
+                    .toSet()
+                    .let {
+                        when (it) {
+                            in oneEdgeBitMasks -> sides++
+                            in twoEdgeBitMasks -> sides += 2
+                        }
                     }
-                }
             }
         }
 

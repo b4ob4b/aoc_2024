@@ -33,7 +33,3 @@ fun <T> List<List<T>>.valueOf(position: Position) = this[position.x][position.y]
 fun <T> List<List<T>>.toMatrix() = Matrix(this)
 
 fun <T> List<List<T>>.toField() = Field(this.reversed())
-
-operator fun Int.times(position: Position) = position * this
-
-operator fun Int.times(position: Position3D) = position * this

@@ -74,3 +74,7 @@ fun List<Int>.lcm(): Long {
             this.all { multiple % it == 0L }
         }
 }
+
+operator fun Int.times(position: Position) = position * this
+
+operator fun Int.times(position: Position3D) = position * this
