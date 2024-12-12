@@ -49,7 +49,7 @@ data class Position(val x: Int, val y: Int) {
         }
     }
 
-    fun get4Neighbours(): Sequence<Position> = sequence {
+    fun get4Neighbors(): Sequence<Position> = sequence {
         Direction4.entries.forEach { yield(this@Position.doMovement(it)) }
     }
 

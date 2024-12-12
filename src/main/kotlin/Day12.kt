@@ -1,5 +1,4 @@
 import utils.*
-import utils.navigation.Direction4
 
 fun main() {
     Day12 { WithSampleData }.test(1930, 1206)
@@ -45,8 +44,7 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
             area++
             seen.add(current)
 
-            Direction4.entries.forEach { direction ->
-                val neighbor = current.doMovement(direction)
+            current.get4Neighbors().forEach { neighbor ->
                 if (neighbor !in field || field[neighbor] != flower) {
                     fullPerimeter++
                 } else if (neighbor !in seen) {
