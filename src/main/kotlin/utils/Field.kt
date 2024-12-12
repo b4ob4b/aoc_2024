@@ -48,6 +48,14 @@ data class Field<T>(val field: List<List<T>>) {
             if (positionMap.containsKey(position)) positionMap[position]!! else cell
         }
 
+    fun slice(xRange: IntRange, yRange: IntRange) = field
+        .slice(yRange)
+        .map { row ->
+            row.slice(xRange)
+        }
+        .reversed()
+        .toField()
+
     fun <R> map(it: (position: Position, cell: T) -> R): Field<R> {
         return field
             .mapIndexed { y, xs ->

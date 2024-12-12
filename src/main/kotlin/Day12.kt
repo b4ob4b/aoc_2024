@@ -56,7 +56,7 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
     }
 
 
-    private fun findNumberOfSides(seen: Set<Position>, flower: String): Int {
+    private fun findNumberOfSides(flowerGroup: Set<Position>, flower: String): Int {
         val bitMasks = setOf(
             setOf(Position(0, 0)),
             setOf(Position(1, 0)),
@@ -72,15 +72,15 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
             setOf(Position(1, 0), Position(0, 1)),
         )
 
-        val y0 = seen.minOf { it.y }
-        val y1 = seen.maxOf { it.y }
-        val x0 = seen.minOf { it.x }
-        val x1 = seen.maxOf { it.x }
+        val y0 = flowerGroup.minOf { it.y }
+        val y1 = flowerGroup.maxOf { it.y }
+        val x0 = flowerGroup.minOf { it.x }
+        val x1 = flowerGroup.maxOf { it.x }
 
         val offset = Position(x0 - 1, y0 - 1)
 
         val transformedField = Field(x1 - x0 + 3, y1 - y0 + 3) { "." }
-            .insertAt(seen.map { it - offset }.associateWith { flower })
+            .insertAt(flowerGroup.map { it - offset }.associateWith { flower })
 
         var sides = 0
 

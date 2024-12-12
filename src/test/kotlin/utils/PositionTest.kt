@@ -90,4 +90,11 @@ internal class PositionTest {
             Position(2, 2),
         )
     }
+
+    @Test
+    fun `parse different strings`() {
+        "1,2".toPosition() shouldBe Position(1, 2)
+
+        "a=2,b=3".toPosition() shouldBe Position(2, 3)
+    }
 }

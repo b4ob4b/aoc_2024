@@ -83,6 +83,16 @@ internal class FieldTest {
     }
 
     @Test
+    fun slice() {
+        field.slice(0..1, 0..1) shouldBe Field(
+            listOf(
+                listOf(1, 2),
+                listOf(4, 5)
+            )
+        )
+    }
+
+    @Test
     fun highlight() {
         field.highlight { _, cell ->
             cell % 2 == 0
