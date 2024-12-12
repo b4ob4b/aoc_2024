@@ -33,14 +33,14 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
     }
 
     private fun calculateAreaAndPerimeter(start: Position, flower: String): Triple<Int, Int, Set<Position>> {
-        val flowersInGroup = mutableSetOf(start)
+        val flowersToProcess = ArrayDeque<Position>().apply { add(start) }
         val seen = mutableSetOf<Position>()
         var area = 0
         var fullPerimeter = 0
 
-        while (flowersInGroup.isNotEmpty()) {
-            val current = flowersInGroup.first()
-            flowersInGroup.remove(current)
+        while (flowersToProcess.isNotEmpty()) {
+            val current = flowersToProcess.removeFirst()
+            if (current in seen) continue
             area++
             seen.add(current)
 
@@ -48,7 +48,7 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
                 if (neighbor !in field || field[neighbor] != flower) {
                     fullPerimeter++
                 } else if (neighbor !in seen) {
-                    flowersInGroup.add(neighbor)
+                    flowersToProcess.add(neighbor)
                 }
             }
         }

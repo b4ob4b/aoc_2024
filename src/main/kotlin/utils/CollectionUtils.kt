@@ -9,9 +9,12 @@ fun main() {
     """
         123
         456
-    """.trimIndent().toGrid().valueOf(Position(2, 1)).print()
+    """.trimIndent().toGrid().valueOf(Position(1, 2)).print()
     // 6
 
+
+    listOf(3L, 2L, 2L).product().print()
+    //  12
 }
 
 fun <T> Iterable<T>.allIndicesOf(element: T) = sequence {
@@ -32,3 +35,5 @@ fun <T> List<List<T>>.toMatrix() = Matrix(this)
 fun <T> List<List<T>>.toField() = Field(this.reversed())
 
 operator fun Int.times(position: Position) = position * this
+
+operator fun Int.times(position: Position3D) = position * this

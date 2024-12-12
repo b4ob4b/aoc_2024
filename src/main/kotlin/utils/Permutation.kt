@@ -1,15 +1,13 @@
 package utils
 
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-@OptIn(ExperimentalTime::class)
 fun main() {
     val size = 3
     val list = (1..size).toList()
 
     measureTime {
-        list.permuteRecursive()
+        list.permuteRecursive().print()
     }.inWholeMilliseconds.let { "took $it ms to calculate" }.print()
 
     measureTime {
@@ -18,7 +16,7 @@ fun main() {
     }.inWholeMilliseconds.let { "took $it ms to calculate" }.print()
 
     measureTime {
-        list.compositions(size).toList()
+        list.compositions(size).toList().print()
     }.inWholeMilliseconds.let { "took $it ms to calculate" }.print()
 }
 
