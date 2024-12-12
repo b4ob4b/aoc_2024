@@ -13,3 +13,4 @@ Here you find my solutions written in Kotlin:
 * [Day 9: Disk Fragmenter](src/main/kotlin/Day09.kt)
 * [Day 10: Hoof It](src/main/kotlin/Day10.kt)
 * [Day 11: Plutonian Pebbles](src/main/kotlin/Day11.kt)
+* [Day 12: Garden Groups](src/main/kotlin/Day12.kt)

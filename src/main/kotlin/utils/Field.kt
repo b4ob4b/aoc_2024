@@ -12,6 +12,13 @@ data class Field<T>(val field: List<List<T>>) {
 
     val numberOfX = field.first().size
     val numberOfY = field.size
+    val allPositions: Sequence<Position> = sequence {
+        xIndices.forEach { y ->
+            yIndices.forEach { x ->
+                yield(Position(x, y))
+            }
+        }
+    }
 
     val xIndices = 0 until numberOfX
     val yIndices = 0 until numberOfY

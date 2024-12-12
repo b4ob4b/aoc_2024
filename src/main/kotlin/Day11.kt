@@ -40,7 +40,6 @@ class Day11(dataType: () -> DataType) : Day("", dataType) {
         return stones.map { it.value }.sum()
     }
 
-
     private fun List<Map<Long, Long>>.merge(): Map<Long, Long> {
         return this.flatMap { it.entries }
             .groupingBy { it.key }

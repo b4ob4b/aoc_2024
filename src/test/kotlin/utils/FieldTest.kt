@@ -29,6 +29,14 @@ internal class FieldTest {
         field.numberOfY shouldBe 2
         field.xIndices.toList() shouldBe listOf(0, 1, 2)
         field.yIndices.toList() shouldBe listOf(0, 1)
+        field.allPositions.toList() shouldBe listOf(
+            Position(0, 0),
+            Position(1, 0),
+            Position(0, 1),
+            Position(1, 1),
+            Position(0, 2),
+            Position(1, 2),
+        )
     }
 
     @Test
