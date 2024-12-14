@@ -31,45 +31,22 @@ class Day14(dataType: () -> DataType) : Day("Restroom Redoubt", dataType) {
         return copy(position = newPosition)
     }
 
-    override fun part1(): Any? {
+    override fun part1(): Int {
         var robots = robots
         repeat(100) {
             robots = robots.map { it.move() }
 
         }
 
-        val q1 = (0..<field.numberOfX / 2).flatMap { x ->
-            (0..<field.numberOfY / 2).map { y ->
-                Position(x, y)
-            }
-        }
+        val quadrants = field.createQuadrants()
 
-        val q2 = (field.numberOfX / 2 + 1 until field.numberOfX).flatMap { x ->
-            (0..<field.numberOfY / 2).map { y ->
-                Position(x, y)
-            }
-        }
+        return quadrants.map { quadrant ->
+            robots.count { it.position in quadrant }
+        }.product()
 
-        val q3 = (0..<field.numberOfX / 2).flatMap { x ->
-            (field.numberOfY / 2 + 1 until field.numberOfY).map { y ->
-                Position(x, y)
-            }
-        }
-
-        val q4 = (field.numberOfX / 2 + 1 until field.numberOfX).flatMap { x ->
-            (field.numberOfY / 2 + 1 until field.numberOfY).map { y ->
-                Position(x, y)
-            }
-        }
-        return listOf(
-            robots.count { it.position in q1 },
-            robots.count { it.position in q2 },
-            robots.count { it.position in q3 },
-            robots.count { it.position in q4 },
-        ).product()
     }
 
-    override fun part2(): Any? {
+    override fun part2(): Int {
         var robots = robots
 
         val areaToSearchXmasTree = field
@@ -87,7 +64,28 @@ class Day14(dataType: () -> DataType) : Day("Restroom Redoubt", dataType) {
         }
 
         field.printTree(robots)
+
         return time
+    }
+
+
+    private fun Field<String>.createQuadrants(): List<List<Position>> = with(this) {
+        val x = numberOfX
+        val y = numberOfY
+        return listOf(
+            createQuadrant(0 until x / 2, 0 until y / 2),
+            createQuadrant(x / 2 until x, 0 until y / 2),
+            createQuadrant(0 until x / 2, y / 2 until y),
+            createQuadrant(x / 2 until x, y / 2 until y)
+        )
+    }
+
+    private fun createQuadrant(xRange: IntRange, yRange: IntRange): List<Position> {
+        return xRange.flatMap { x ->
+            yRange.map { y ->
+                Position(x, y)
+            }
+        }
     }
 
     private fun Field<String>.printTree(robots: List<Robot>) =
