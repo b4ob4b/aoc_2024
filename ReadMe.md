@@ -15,3 +15,4 @@ Here you find my solutions written in Kotlin:
 * [Day 11: Plutonian Pebbles](src/main/kotlin/Day11.kt)
 * [Day 12: Garden Groups](src/main/kotlin/Day12.kt)
 * [Day 13: Claw Contraption](src/main/kotlin/Day13.kt)
+* [Day 14: Restroom Redoubt](src/main/kotlin/Day14.kt)

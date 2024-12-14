@@ -68,6 +68,16 @@ data class Field<T>(val field: List<List<T>>) {
             .toField()
     }
 
+    fun <R> mapToList(it: (position: Position, cell: T) -> R): List<R> {
+        return field
+            .flatMapIndexed { y, xs ->
+                xs.mapIndexed { x, cell ->
+                    val position = Position(x, y)
+                    it(position, cell)
+                }
+            }
+    }
+
     fun highlight(highlight: (position: Position, cell: T) -> Boolean) {
         val highlightColor = "\u001b[" + 43 + "m"
         val defaultColor = "\u001b[" + 0 + "m"
