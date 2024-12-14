@@ -16,7 +16,7 @@ class Day08(dataType: () -> DataType) : Day("Resonant Collinearity", dataType) {
 
     override fun part1() = antennas.calculateNumberOfAntinodes(1..1)
 
-    override fun part2() = antennas.calculateNumberOfAntinodes(0..field.numberOfX)
+    override fun part2() = antennas.calculateNumberOfAntinodes(0..field.width)
 
     private fun Map<String, List<Position>>.calculateNumberOfAntinodes(sendingRange: IntRange) =
         flatMap { (_, positions) -> positions.findAntinodes(sendingRange) }
@@ -33,8 +33,8 @@ class Day08(dataType: () -> DataType) : Day("Resonant Collinearity", dataType) {
 
     private fun Field<String>.search(regex: Regex) =
         sequence {
-            (0 until numberOfY).flatMap { y ->
-                (0 until numberOfX).map { x ->
+            (0 until height).flatMap { y ->
+                (0 until width).map { x ->
                     if (field[y][x].matches(regex)) yield(Position(x, y))
                 }
             }

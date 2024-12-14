@@ -58,7 +58,7 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
 
     private fun findNumberOfSides(flowerGroup: Set<Position>, flower: String): Int {
         val bitMask2x2 = setOf(
-            Position.origin,
+            Position(0, 0),
             Position(1, 0),
             Position(0, 1),
             Position(1, 1),
@@ -90,8 +90,8 @@ class Day12(dataType: () -> DataType) : Day("Garden Groups", dataType) {
 
         var sides = 0
 
-        (0 until (transformedField.numberOfY - 1)).forEach { y ->
-            (0 until (transformedField.numberOfX - 1)).forEach { x ->
+        (0 until (transformedField.height - 1)).forEach { y ->
+            (0 until (transformedField.width - 1)).forEach { x ->
                 bitMask2x2
                     .map { it + Position(x, y) }
                     .filter { transformedField[it] == flower }

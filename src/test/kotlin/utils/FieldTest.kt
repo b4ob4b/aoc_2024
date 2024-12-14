@@ -25,8 +25,8 @@ internal class FieldTest {
 
     @Test
     fun properties() {
-        field.numberOfX shouldBe 3
-        field.numberOfY shouldBe 2
+        field.width shouldBe 3
+        field.height shouldBe 2
         field.xIndices.toList() shouldBe listOf(0, 1, 2)
         field.yIndices.toList() shouldBe listOf(0, 1)
         field.allPositions.toList() shouldBe listOf(

@@ -10,8 +10,8 @@ data class Field<T>(val field: List<List<T>>) {
 
     constructor(x: Int, y: Int, element: () -> T) : this(List(x * y) { element.invoke() }.chunked(x))
 
-    val numberOfX = field.first().size
-    val numberOfY = field.size
+    val width = field.first().size
+    val height = field.size
     val allPositions: Sequence<Position> = sequence {
         xIndices.forEach { y ->
             yIndices.forEach { x ->
@@ -20,8 +20,8 @@ data class Field<T>(val field: List<List<T>>) {
         }
     }
 
-    val xIndices = 0 until numberOfX
-    val yIndices = 0 until numberOfY
+    val xIndices = 0 until width
+    val yIndices = 0 until height
 
     operator fun get(position: Position) = field[position.y][position.x]
 
@@ -30,8 +30,8 @@ data class Field<T>(val field: List<List<T>>) {
     }
 
     fun search(element: T) = sequence {
-        (0 until numberOfY).flatMap { y ->
-            (0 until numberOfX).map { x ->
+        (0 until height).flatMap { y ->
+            (0 until width).map { x ->
                 if (field[y][x] == element) yield(Position(x, y))
             }
         }
