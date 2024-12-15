@@ -11,12 +11,18 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
 
     private val data = input.split("\n\n".toRegex())
     private val warehouse = data[0].toGrid().toField()
+
+    private val wall = "#"
+    private val lanternfish = "@"
+    private val empty = "."
+    private val box = "O"
+
     private val warehouse2 = data[0].toGrid {
         when (it) {
-            "#" -> "##"
-            "O" -> "[]"
-            "." -> ".."
-            "@" -> "@."
+            wall -> "##"
+            box -> "[]"
+            empty -> ".."
+            lanternfish -> "@."
             else -> throw Exception("unknown symbol $it")
         }
     }
@@ -24,6 +30,7 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
             it.joinToString("").split("")
         }
         .toField()
+    
     private val path = data[1]
         .splitLines()
         .flatMap {
@@ -38,12 +45,6 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
                 else -> throw Exception("unknown symbol $it")
             }
         }
-
-    private val wall = "#"
-    private val lanternfish = "@"
-    private val empty = "."
-    private val box = "O"
-
 
     override fun part1(): Int {
         return path.fold(warehouse) { warehouse, direction4 ->
@@ -103,7 +104,7 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
             }
     }
 
-    override fun part2(): Any? {
+    override fun part2(): Int {
         return path.fold(warehouse2) { warehouse, direction4 ->
             val lanternFish = warehouse.search(lanternfish).single()
             val look = lanternFish.doMovement(direction4)
@@ -124,7 +125,7 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
                     while (canBeMoved == null) {
                         if (warehouse[checkPosition] == empty) {
                             canBeMoved = true
-                        } else if (warehouse[checkPosition] == "[" || warehouse[checkPosition] == "]") {
+                        } else if (warehouse[checkPosition].isBox()) {
                             checkPosition = checkPosition.doMovement(direction4)
                         } else if (warehouse[checkPosition] == wall) {
                             canBeMoved = false
@@ -152,7 +153,7 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
                                         .insertAt(look, lanternfish)
                                 }
 
-                                Direction4.North -> {
+                                Direction4.North, Direction4.South -> {
                                     val boxesToMove = warehouse.checkBox(look, direction4)
 
                                     return@fold boxesToMove.fold(warehouse) { warehouse2, (from, to) ->
@@ -180,21 +181,6 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
                                         .insertAt(look, lanternfish)
                                 }
 
-                                Direction4.South -> {
-                                    val boxesToMove = warehouse.checkBox(look, direction4)
-
-                                    return@fold boxesToMove.fold(warehouse) { warehouse2, (from, to) ->
-                                        warehouse2.insertAt(to, warehouse2[from])
-                                            .insertAt(from, empty)
-                                    }.let {
-                                        if (boxesToMove.isEmpty()) {
-                                            it
-                                        } else {
-                                            it.insertAt(look, lanternfish)
-                                                .insertAt(lanternFish, empty)
-                                        }
-                                    }
-                                }
                             }
 
                         }
@@ -216,20 +202,9 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
     }
 
     private fun Field<String>.checkBox(position: Position, direction4: Direction4): Set<Pair<Position, Position>> {
-        val directionToCheck1 = when (direction4) {
-            Direction4.North -> Direction4.West
-            Direction4.South -> Direction4.West
-            else -> throw Exception("direction should be North or South")
-        }
-        val directionToCheck2 = when (direction4) {
-            Direction4.North -> Direction4.East
-            Direction4.South -> Direction4.East
-            else -> throw Exception("direction should be North or South")
-        }
-
         val partnerPiece = when (this[position]) {
-            "]" -> position.doMovement(directionToCheck1)
-            "[" -> position.doMovement(directionToCheck2)
+            "]" -> position.doMovement(Direction4.West)
+            "[" -> position.doMovement(Direction4.East)
             else -> throw Exception("position should be [ or ]")
         }
         val positionsToCheck = listOf(position, partnerPiece)
@@ -237,29 +212,29 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
 
         val canBeMoved = when {
             positionsToCheck.any { this[it] == wall } -> false
-            positionsToCheck.any { this[it] == "]" || this[it] == "[" } -> null
+            positionsToCheck.any { this[it].isBox() } -> null
             positionsToCheck.all { this[it] == empty } -> true
             else -> throw Exception("unknown object in the way")
         }
 
         val positionsToMove = mutableSetOf<Pair<Position, Position>>()
         if (canBeMoved == null) {
-            val box1 = if (this[positionsToCheck[0]] == "[" || this[positionsToCheck[0]] == "]") {
+            val leftPart = if (this[positionsToCheck[0]].isBox()) {
                 this.checkBox(positionsToCheck[0], direction4)
             } else {
                 null
             }
-            val box2 = if (this[positionsToCheck[1]] == "[" || this[positionsToCheck[1]] == "]") {
+            val rightPart = if (this[positionsToCheck[1]].isBox()) {
                 this.checkBox(positionsToCheck[1], direction4)
             } else {
                 null
             }
 
-            if (box1 != null && box1.isEmpty() || box2 != null && box2.isEmpty()) {
+            if (leftPart != null && leftPart.isEmpty() || rightPart != null && rightPart.isEmpty()) {
                 return emptySet()
             } else {
-                if (box1 != null) positionsToMove.addAll(box1)
-                if (box2 != null) positionsToMove.addAll(box2)
+                if (leftPart != null) positionsToMove.addAll(leftPart)
+                if (rightPart != null) positionsToMove.addAll(rightPart)
             }
         } else if (canBeMoved) {
             positionsToMove.add(position to positionsToCheck[0])
@@ -275,4 +250,6 @@ class Day15(dataType: () -> DataType) : Day("Warehouse Woes", dataType) {
 
         return positionsToMove
     }
+
+    private fun String.isBox() = this == "[" || this == "]"
 }
