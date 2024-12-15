@@ -16,3 +16,4 @@ Here you find my solutions written in Kotlin:
 * [Day 12: Garden Groups](src/main/kotlin/Day12.kt)
 * [Day 13: Claw Contraption](src/main/kotlin/Day13.kt)
 * [Day 14: Restroom Redoubt](src/main/kotlin/Day14.kt)
+* [Day 15: Warehouse Woes](src/main/kotlin/Day15.kt)
