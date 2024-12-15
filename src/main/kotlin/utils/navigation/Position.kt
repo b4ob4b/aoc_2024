@@ -26,6 +26,17 @@ data class Position(val x: Int, val y: Int) {
 
     operator fun times(factor: Int) = Position(x * factor, y * factor)
 
+    operator fun rangeTo(other: Position): List<Position> {
+        if (this.x != other.x && this.y != other.y) throw NotImplementedError("Diagonal ranges are not supported")
+        return if (this.x == other.x) {
+            val range = if (this.y <= other.y) (this.y..other.y) else (this.y downTo other.y)
+            range.map { y -> Position(this.x, y) }
+        } else {
+            val range = if (this.x <= other.x) (this.x..other.x) else (this.x downTo other.x)
+            range.map { x -> Position(x, this.y) }
+        }
+    }
+
     fun doMovement(direction: Direction4, northUp: Boolean = true): Position {
         val step = if (northUp) 1 else -1
         return when (direction) {
