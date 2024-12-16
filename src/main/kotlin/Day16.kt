@@ -14,6 +14,7 @@ class Day16(dataType: () -> DataType) : Day("Reindeer Maze", dataType) {
     private val start = "S"
     private val end = "E"
     private var cheapestPathCost = -1
+    private val startPosition = maze.search(start).single()
 
     private data class Step(
         val position: Position,
@@ -23,72 +24,61 @@ class Day16(dataType: () -> DataType) : Day("Reindeer Maze", dataType) {
     )
 
     override fun part1(): Int {
-        val start = maze.search(start).single()
-
-        val path = mutableSetOf(Step(start, Direction4.East, 0))
+        val steps = mutableSetOf(Step(startPosition, Direction4.East, 0))
         val seen = mutableSetOf<Pair<Position, Direction4>>()
 
         while (true) {
-            val current = path.minByOrNull { it.price } ?: break
-            path.remove(current)
-            if (current.position to current.direction4 in seen) continue
-            seen.add(current.position to current.direction4)
+            val step = steps.minByOrNull { it.price } ?: break
+            steps.remove(step)
+            if (!seen.add(step.position to step.direction4)) continue
 
-            if (maze[current.position] == end) {
-                cheapestPathCost = current.price
-                return current.price
+            if (maze[step.position] == end) {
+                cheapestPathCost = step.price
+                return step.price
             }
-
-            Rotation.entries.map { current.direction4.rotateBy(it) }
-                .map { current.position.doMovement(it) to it }
-                .filter { maze[it.first] != wall && it !in seen }
-                .forEach {
-                    path.add(Step(it.first, it.second, current.price + 1001))
-                }
-            val next = current.position.doMovement(current.direction4)
-            if (maze[next] != wall && next to current.direction4 !in seen) {
-                path.add(Step(next, current.direction4, current.price + 1))
-            }
+            steps.checkNext(step)
         }
         throw Exception("No path found")
     }
 
     override fun part2(): Int {
-        val start = maze.search(start).single()
-
-        val path = mutableListOf(Step(start, Direction4.East, 0, listOf(start)))
-        val tilesOptimalPath = mutableSetOf<Position>()
+        val steps = mutableListOf(Step(startPosition, Direction4.East, 0, listOf(startPosition)))
         val tilesVisited = mutableMapOf<Pair<Position, Direction4>, Int>()
+        val tilesOptimalPath = mutableSetOf<Position>()
 
         while (true) {
-            val current = path.minByOrNull { it.price } ?: break
-            path.remove(current)
+            val step = steps.minByOrNull { it.price } ?: break
+            steps.remove(step)
 
-            if (current.price > cheapestPathCost) continue
+            if (step.price > cheapestPathCost) continue
 
-            val pair = current.position to current.direction4
-            if (current.price <= tilesVisited.getOrDefault(pair, Int.MAX_VALUE)) {
-                tilesVisited[pair] = current.price
+            val pair = step.position to step.direction4
+            if (step.price <= tilesVisited.getOrDefault(pair, Int.MAX_VALUE)) {
+                tilesVisited[pair] = step.price
             } else {
                 continue
             }
 
-            if (maze[current.position] == end) {
-                tilesOptimalPath.addAll(current.path)
+            if (maze[step.position] == end) {
+                tilesOptimalPath.addAll(step.path)
                 continue
             }
 
-            Rotation.entries.map { current.direction4.rotateBy(it) }
-                .map { current.position.doMovement(it) to it }
-                .filter { maze[it.first] != wall && it.first !in current.path }
-                .forEach {
-                    path.add(Step(it.first, it.second, current.price + 1001, current.path + it.first))
-                }
-            val next = current.position.doMovement(current.direction4)
-            if (maze[next] != wall && next !in current.path) {
-                path.add(Step(next, current.direction4, current.price + 1, current.path + next))
-            }
+            steps.checkNext(step)
         }
         return tilesOptimalPath.size
+    }
+
+    private fun MutableCollection<Step>.checkNext(step: Step) {
+        Rotation.entries.map { step.direction4.rotateBy(it) }
+            .map { step.position.doMovement(it) to it }
+            .filter { maze[it.first] != wall && it.first !in step.path }
+            .forEach {
+                this.add(Step(it.first, it.second, step.price + 1001, step.path + it.first))
+            }
+        val next = step.position.doMovement(step.direction4)
+        if (maze[next] != wall && next !in step.path) {
+            this.add(Step(next, step.direction4, step.price + 1, step.path + next))
+        }
     }
 }           
