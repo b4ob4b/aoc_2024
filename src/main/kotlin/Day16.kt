@@ -57,39 +57,30 @@ class Day16(dataType: () -> DataType) : Day("Reindeer Maze", dataType) {
         val start = maze.search(start).single()
 
         val path = mutableListOf(Step(start, Direction4.East, 0, listOf(start)))
-        val seen = mutableSetOf<List<Position>>()
-        val tilesSeen = mutableSetOf<Position>()
-        val tiles2 = mutableMapOf<Pair<Position, Direction4>, Int>()
+        val tilesOptimalPath = mutableSetOf<Position>()
+        val tilesVisited = mutableMapOf<Pair<Position, Direction4>, Int>()
 
         while (true) {
             val current = path.minByOrNull { it.price } ?: break
             path.remove(current)
 
             if (current.price > cheapestPathCost) continue
-            if (current.path in seen) continue
 
             val pair = current.position to current.direction4
-            if (pair !in tiles2) {
-                tiles2[pair] = current.price
+            if (current.price <= tilesVisited.getOrDefault(pair, Int.MAX_VALUE)) {
+                tilesVisited[pair] = current.price
             } else {
-                if (current.price <= tiles2[pair]!!) {
-                    tiles2[pair] = current.price
-                } else {
-                    continue
-                }
+                continue
             }
 
-            seen.add(current.path)
-
             if (maze[current.position] == end) {
-                tilesSeen.addAll(current.path)
+                tilesOptimalPath.addAll(current.path)
                 continue
             }
 
             Rotation.entries.map { current.direction4.rotateBy(it) }
                 .map { current.position.doMovement(it) to it }
-                .filter { maze[it.first] != wall }
-                .filter { it.first !in current.path }
+                .filter { maze[it.first] != wall && it.first !in current.path }
                 .forEach {
                     path.add(Step(it.first, it.second, current.price + 1001, current.path + it.first))
                 }
@@ -98,6 +89,6 @@ class Day16(dataType: () -> DataType) : Day("Reindeer Maze", dataType) {
                 path.add(Step(next, current.direction4, current.price + 1, current.path + next))
             }
         }
-        return tilesSeen.size
+        return tilesOptimalPath.size
     }
 }           
