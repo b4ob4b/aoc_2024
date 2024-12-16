@@ -15,6 +15,13 @@ class Day16(dataType: () -> DataType) : Day("Reindeer Maze", dataType) {
     private val end = "E"
     private var cheapestPathCost = -1
 
+    private data class Step(
+        val position: Position,
+        val direction4: Direction4,
+        val price: Int,
+        val path: List<Position> = emptyList()
+    )
+
     override fun part1(): Int {
         val start = maze.search(start).single()
 
@@ -45,13 +52,6 @@ class Day16(dataType: () -> DataType) : Day("Reindeer Maze", dataType) {
         }
         throw Exception("No path found")
     }
-
-    private data class Step(
-        val position: Position,
-        val direction4: Direction4,
-        val price: Int,
-        val path: List<Position> = emptyList()
-    )
 
     override fun part2(): Int {
         val start = maze.search(start).single()
