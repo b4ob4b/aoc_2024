@@ -12,81 +12,95 @@ class Day17(dataType: () -> DataType) : Day("Chronospatial Computer", dataType) 
         val (name, value) = "[ABC]|\\d+".toRegex().findAll(it).map { it.value }.toList()
         name to value.toInt()
     }.toMap()
+
     private val program = Program(registers, data.last().extractInts())
 
     private data class Program(val registers: Map<String, Int>, val values: List<Int>) {
-        fun run(): Map<String, Int> {
-            return values
-                .chunked(2)
-                .fold(registers.toMutableMap()) { registers: MutableMap<String, Int>, (opcode: Int, combo: Int) ->
+        fun run(): String {
+            val registers = registers.toMutableMap()
+            var instructionPointer = 0
+            var output = ""
 
-                    val comboOperand = when (combo) {
-                        in 0..3 -> combo
-                        4 -> registers["A"]!!
-                        5 -> registers["B"]!!
-                        6 -> registers["C"]!!
-                        7 -> 7
-                        else -> {
-                            throw Exception("unknown combo $combo")
-                        }
+            while (instructionPointer < values.size) {
+                val opcode = values[instructionPointer]
+                val literalCombo = values[instructionPointer + 1]
+
+                val comboOperand = when (literalCombo) {
+                    in 0..3 -> literalCombo
+                    4 -> registers["A"]!!
+                    5 -> registers["B"]!!
+                    6 -> registers["C"]!!
+                    7 -> 7
+                    else -> {
+                        throw Exception("unknown combo $literalCombo")
                     }
+                }
 
-                    when (opcode) {
-                        0 -> {
-                            val numerator = registers["A"]!!
-                            val denominator = comboOperand * comboOperand
-                            registers["A"] = numerator / denominator
-                        }
-
-                        1 -> {
-                            registers["B"] = registers["B"]!! xor combo
-                        }
-
-                        2 -> {
-                            registers["B"] = comboOperand % 8
-                        }
-
-                        3 -> {
-                            if (registers["A"] != 0) {
-                                throw NotImplementedError("pointer thing has to be implemented :)")
-//                                set pointer to $combo
-//                                after that, the pointer doesn't jump by 2
+                when (opcode) {
+                    0 -> {
+                        val numerator = registers["A"]!!
+                        val denominator = Math.pow(2.0, comboOperand.toDouble()).also {
+                            if (it > Int.MAX_VALUE) {
+                                throw NumberFormatException("number too big for Int")
                             }
-                        }
+                        }.toInt()
+                        registers["A"] = numerator / denominator
+                    }
 
-                        4 -> {
-                            registers["B"] = registers["B"]!! xor registers["C"]!!
-                        }
+                    1 -> {
+                        registers["B"] = registers["B"]!! xor literalCombo
+                    }
 
-                        5 -> {
-                            val output = comboOperand % 8
-                            print("$output, ")
-                        }
+                    2 -> {
+                        registers["B"] = comboOperand % 8
+                    }
 
-                        6 -> {
-                            val numerator = registers["A"]!!
-                            val denominator = comboOperand * comboOperand
-                            registers["B"] = numerator / denominator
-                        }
-
-                        7 -> {
-                            val numerator = registers["A"]!!
-                            val denominator = comboOperand * comboOperand
-                            registers["C"] = numerator / denominator
+                    3 -> {
+                        if (registers["A"] != 0) {
+                            instructionPointer = literalCombo
+                        } else {
+                            instructionPointer += 2
                         }
                     }
-                    registers
-                }.toMap()
+
+                    4 -> {
+                        registers["B"] = registers["B"]!! xor registers["C"]!!
+                    }
+
+                    5 -> {
+                        output += "${comboOperand % 8},"
+                    }
+
+                    6 -> {
+                        val numerator = registers["A"]!!
+                        val denominator = Math.pow(2.0, comboOperand.toDouble()).also {
+                            if (it > Int.MAX_VALUE) {
+                                throw NumberFormatException("number too big for Int")
+                            }
+                        }.toInt()
+                        registers["B"] = numerator / denominator
+                    }
+
+                    7 -> {
+                        val numerator = registers["A"]!!
+                        val denominator = Math.pow(2.0, comboOperand.toDouble()).also {
+                            if (it > Int.MAX_VALUE) {
+                                throw NumberFormatException("number too big for Int")
+                            }
+                        }.toInt()
+                        registers["C"] = numerator / denominator
+                    }
+                }
+
+                if (opcode != 3) instructionPointer += 2
+            }
+
+            return output
         }
     }
 
     override fun part1(): Any? {
-        Program(mapOf("A" to 0, "B" to 0, "C" to 9), listOf(2, 6)).run().print()
-        Program(mapOf("A" to 10, "B" to 0, "C" to 0), listOf(5, 0, 5, 1, 5, 4)).run().print()
-        // some missing program
-        Program(mapOf("A" to 0, "B" to 29, "C" to 0), listOf(1, 7)).run().print()
-        Program(mapOf("A" to 0, "B" to 2024, "C" to 43690), listOf(4, 0)).run().print()
-        return "not yet implement"
+        return program.run().let { it.substring(0 until it.length - 1) }
     }
 
     override fun part2(): Any? {
