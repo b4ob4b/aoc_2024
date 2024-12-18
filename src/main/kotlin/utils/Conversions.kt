@@ -41,7 +41,7 @@ fun String.extractToList(pattern: Regex) = pattern.findAll(this).map { it.value 
 
 fun String.extractToList(pattern: String) = this.extractToList(Regex(pattern))
 
-fun String.extractInts() = this.extractToList("-?\\d+").map { it.toInt() }
+fun String.extractInts() = if (isEmpty()) emptyList() else this.extractToList("-?\\d+").map { it.toInt() }
 
 fun String.toGrid(separator: String = "", filterBlanks: Boolean = true) =
     this.splitLines().map { line ->
