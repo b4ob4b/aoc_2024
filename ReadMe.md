@@ -18,3 +18,5 @@ Here you find my solutions written in Kotlin:
 * [Day 14: Restroom Redoubt](src/main/kotlin/Day14.kt)
 * [Day 15: Warehouse Woes](src/main/kotlin/Day15.kt)
 * [Day 16: Reindeer Maze](src/main/kotlin/Day16.kt)
+* [Day 17: Chronospatial Computer](src/main/kotlin/Day17.kt)
+* [Day 18: RAM Run](src/main/kotlin/Day18.kt)
