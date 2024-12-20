@@ -20,3 +20,4 @@ Here you find my solutions written in Kotlin:
 * [Day 16: Reindeer Maze](src/main/kotlin/Day16.kt)
 * [Day 17: Chronospatial Computer](src/main/kotlin/Day17.kt)
 * [Day 18: RAM Run](src/main/kotlin/Day18.kt)
+* [Day 20: Race Condition](src/main/kotlin/Day20.kt)
