@@ -1,93 +1,36 @@
 import utils.*
-import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.collections.List
 
 fun main() {
     Day20 { WithSampleData }.test()
     Day20 { WithInputData }.solve()
 }
 
-class Day20(dataType: () -> DataType) : Day("", dataType) {
+class Day20(dataType: () -> DataType) : Day("Race Condition", dataType) {
 
     private val maze = input.toGrid().toField()
     private val wall = "#"
     private val start = "S"
     private val end = "E"
-    private val raceTrack = "."
     private val startPosition = maze.search(start).single()
+    private val endPosition = maze.search(end).single()
+    private val timesTrackForward = bfs(startPosition, endPosition)
+    private val timesTrackBackWards = bfs(endPosition, startPosition)
+    private val costWithoutCheat = timesTrackForward.single { it.position == endPosition }.cost
 
-    override fun part1(): Any? {
-        val cheatPositionsList = mutableSetOf<List<Position>>()
+    override fun part1() = calculateAmountCheatsSaving(2)
 
-        maze.search(raceTrack).forEach { position ->
-            val queue = ArrayDeque<MutableList<Position>>()
-            queue.add(mutableListOf(position))
-            val visited = mutableSetOf<List<Position>>()
-            while (queue.isNotEmpty()) {
-                val current = queue.removeFirst()
-                if (current.size == 3) continue
-                if (!visited.add(current)) continue
-                current.last().get4Neighbors().filter { neighbor ->
-                    maze[neighbor] == wall && neighbor.x != 0 && neighbor.y != 0 && neighbor.x != maze.width - 1 && neighbor.y != maze.height - 1
-                }.forEach { neighbor ->
-                    queue.add((current + neighbor).toMutableList())
-                }
-            }
-
-            visited
-                .filter { it.isNotEmpty() }
-                .forEach { list ->
-                    cheatPositionsList.add(list.filter { maze[it] == wall })
-                }
-        }
-
-        val costWithoutCheat = runMaze(emptyList())
-
-        return cheatPositionsList
-            .map { cheatPositions -> runMaze(cheatPositions) }
-            .map { costWithoutCheat - it }
-            .filter { it >= 100 }
-            .size
-    }
-
-    private fun runMaze(cheatPositions: List<Position>): Int {
-        val queue = PriorityQueue<Pair<Position, Int>>(compareBy { it.second })
-        val visited = mutableSetOf<Position>()
-        queue.add(startPosition to 0)
-
-        while (queue.isNotEmpty()) {
-            val (position, cost) = queue.poll()
-
-            if (!visited.add(position)) continue
-
-            if (maze[position] == end) {
-                return cost
-            }
-            position.get4Neighbors().forEach { neighbor ->
-                if (maze[neighbor] != wall || neighbor in cheatPositions) {
-                    queue.add(neighbor to cost + 1)
-                }
-            }
-        }
-        throw Exception("No path found")
-    }
+    override fun part2() = calculateAmountCheatsSaving(20)
 
     private data class Step(val position: Position, val cost: Int)
 
-    override fun part2(): Int {
-        val endPosition = maze.search(end).single()
-        val fromStart = bfs(startPosition, endPosition)
-        val fromEnd = bfs(endPosition, startPosition)
-
-        val costWithoutCheat = fromStart.single { it.position == endPosition }.cost
-
-        return fromStart.asSequence().flatMap { source ->
-            fromEnd.map { target ->
+    private fun calculateAmountCheatsSaving(savingTime: Int): Int {
+        return timesTrackForward.asSequence().flatMap { source ->
+            timesTrackBackWards.map { target ->
                 if (source.position == target.position) return@map null
 
                 val distance = (target.position - source.position).manhattenDistance
-                if (distance <= 20) {
+                if (distance <= savingTime) {
                     source.cost + target.cost + distance
                 } else null
             }
