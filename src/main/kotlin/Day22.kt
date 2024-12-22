@@ -14,6 +14,31 @@ class Day22(dataType: () -> DataType) : Day("Monkey Market", dataType) {
         (1..2000).fold(secretNumber) { acc, _ -> acc.calculateNextSecretNumber() }
     }
 
+    override fun part2(): Int {
+        val listOfSecrets = secretNumbers.map { secretNumber2 ->
+            (1..2000).runningFold(secretNumber2) { secretNumber, _ ->
+                secretNumber.calculateNextSecretNumber()
+            }
+                .map { it.toString().last().digitToInt() }
+                .windowed(2) { (first, second) -> second to second - first }
+                .windowed(4) { it.map { pair -> pair.second } to it.last().first }
+        }
+
+        val candidates = listOfSecrets.asSequence().flatten()
+            .groupingBy { it.first }
+            .fold(0) { acc, element -> acc + element.second }
+            .toList()
+            .sortedByDescending { it.second }
+
+        return candidates.take(10)
+            .maxOf { candidate ->
+                listOfSecrets
+                    .mapNotNull { secrets -> secrets.firstOrNull { it.first == candidate.first } }
+                    .sumOf { it.second }
+            }
+    }
+
+
     private fun Long.calculateNextSecretNumber(): Long {
         val moduloNumber = 16777216
 
@@ -27,45 +52,5 @@ class Day22(dataType: () -> DataType) : Day("Monkey Market", dataType) {
         val step8 = step7 xor step6
         val step9 = step8 % moduloNumber
         return step9
-    }
-
-    override fun part2(): Int {
-        val listOfSecrets = secretNumbers.map { secretNumber2 ->
-            (1..2000).runningFold(secretNumber2) { secretNumber, _ ->
-                secretNumber.calculateNextSecretNumber()
-            }
-                .map {
-                    it.toString().last().toString().toInt()
-                }
-                .windowed(2)
-                .map { (first, second) -> second to second - first }
-                .windowed(4)
-        }
-            .map {
-                it.map { (first, second, third, fourth) ->
-                    listOf(
-                        first.second,
-                        second.second,
-                        third.second,
-                        fourth.second,
-                    ) to fourth.first
-                }
-            }
-
-        val candidates = listOfSecrets.asSequence().flatten()
-            .groupingBy { it.first }
-            .fold(0) { acc, element -> acc + element.second }
-            .toList()
-            .sortedByDescending { it.second }.toList()
-
-
-        return candidates.take(10).maxOf { ppp ->
-            listOfSecrets.mapNotNull { secrets ->
-                secrets
-                    .firstOrNull { it.first == ppp.first }
-
-            }
-                .sumOf { it.second }
-        }
     }
 }           
