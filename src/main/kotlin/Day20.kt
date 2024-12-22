@@ -73,7 +73,49 @@ class Day20(dataType: () -> DataType) : Day("", dataType) {
         throw Exception("No path found")
     }
 
-    override fun part2(): Any? {
-        return "not yet implement"
+    private data class Step(val position: Position, val cost: Int)
+
+    override fun part2(): Int {
+        val endPosition = maze.search(end).single()
+        val fromStart = bfs(startPosition, endPosition)
+        val fromEnd = bfs(endPosition, startPosition)
+
+        val costWithoutCheat = fromStart.single { it.position == endPosition }.cost
+
+        return fromStart.asSequence().flatMap { source ->
+            fromEnd.map { target ->
+                if (source.position == target.position) return@map null
+
+                val distance = (target.position - source.position).manhattenDistance
+                if (distance <= 20) {
+                    source.cost + target.cost + distance
+                } else null
+            }
+        }.filterNotNull()
+            .filter { it < costWithoutCheat }
+            .map { costWithoutCheat - it }
+            .count { it >= 100 }
+    }
+
+    private fun bfs(startPosition: Position, endPosition: Position): Set<Step> {
+        val queue = ArrayDeque<Step>()
+        val visited = mutableSetOf<Step>()
+        queue.add(Step(startPosition, 0))
+
+        while (queue.isNotEmpty()) {
+            val (position, cost) = queue.removeFirst()
+
+            if (!visited.add(Step(position, cost))) continue
+
+            if (position == endPosition) {
+                break
+            }
+            position.get4Neighbors().forEach { neighbor ->
+                if (maze[neighbor] != wall && neighbor !in visited.map { it.position }) {
+                    queue.add(Step(neighbor, cost + 1))
+                }
+            }
+        }
+        return visited.toSet()
     }
 }           
