@@ -21,3 +21,4 @@ Here you find my solutions written in Kotlin:
 * [Day 17: Chronospatial Computer](src/main/kotlin/Day17.kt)
 * [Day 18: RAM Run](src/main/kotlin/Day18.kt)
 * [Day 20: Race Condition](src/main/kotlin/Day20.kt)
+* [Day 22: Monkey Market](src/main/kotlin/Day22.kt)
